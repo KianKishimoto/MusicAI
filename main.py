@@ -6,9 +6,10 @@ from moviepy.editor import *
 from collections.abc import MutableSequence
 from madmom import *
 
+def column(matrix, i):
+    return [row[i] for row in matrix]
 
 def fetchVid(link):
-
     try:
         vid = YouTube(link)
         print("Title: ", vid.title)
@@ -37,13 +38,14 @@ def beatTrack(directory):
     #Output: array of beat times
     #This method will read in the audio file and return an array of beat times using madmom
 
-    processor = features.beats.DBNBeatTrackingProcessor(fps=100)
-    #downProcessor = features.downbeats.DBNDownBeatTrackingProcessor(beats_per_bar=[3, 4], fps=100)
-    act = features.beats.RNNBeatProcessor()(directory)
-    #downAct = features.downbeats.RNNDownBeatProcessor()(directory)
-    beats = processor(act)
-    #downBeats = downProcessor(downAct)
-    return beats.tolist()
+    #processor = features.beats.DBNBeatTrackingProcessor(fps=100)
+    downProcessor = features.downbeats.DBNDownBeatTrackingProcessor(beats_per_bar=[3, 4], fps=100)
+    #act = features.beats.RNNBeatProcessor()(directory)
+    downAct = features.downbeats.RNNDownBeatProcessor()(directory)
+    #beats = processor(act)
+    downBeats = downProcessor(downAct)
+    beats = column(downBeats, 0)
+    return beats #.tolist()
 
 def beatMatch(beatVideo, beatInput, inputVideo, inputAudio):
     #Input: array of beat times for video, array of beat times for input
@@ -82,7 +84,7 @@ def beatMatch(beatVideo, beatInput, inputVideo, inputAudio):
     music1 = CompositeAudioClip([music])
     finalVideo = VideoFileClip(os.path.join("media/FinalVideo_NOAUDIO.mp4"))
     finalVideo.audio = music1
-    finalVideo.write_videofile(os.path.join("media/FinalVideo.mp4"))
+    finalVideo.write_videofile(os.path.join("media/FinalVideo1.mp4"))
     
 
 # def flashBeat(beats, directory):
@@ -95,9 +97,9 @@ def beatMatch(beatVideo, beatInput, inputVideo, inputAudio):
 
 #     #iterate over the beats array and create a list of clips with the lights flashing
 #     clips = []
-#     for i in range(len(beats)):
+#     for i in range(len(beats)-1):
 #         clip = video.subclip(beats[i], beats[i]+0.1)
-#         clips.append(vfx.colorx(clip, 8))
+#         clips.append(vfx.rotate(clip, 180))
     
 #     #Concatenate the clips together
 #     final_clip = concatenate_videoclips(clips)
@@ -118,5 +120,5 @@ if __name__ == "__main__":
     beatMatch(beatVideo, beatInput, "media/video.mp4","media/input/audio.mp3")
 
 
-    #flashBeat(beats, "media/video.mp4")
+    #flashBeat(beatVideo, "media/video.mp4")
 
