@@ -17,14 +17,13 @@ def fetchVid(link):
         vid.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(output_path="media",filename="video.mp4")
     except:
         print("Connection failed. Try again later.")
-    
+
 def fetchAudio(link):
     print("Converting mp3...")
     vid = YouTube(link)
     print("Title: ", vid.title)
     print("Length: ", vid.length)
     vid.streams.filter(only_audio=True).first().download(output_path="media/input",filename="audio.mp3")
-    
     
 def convertVid():
     video = VideoFileClip(os.path.join("media/video.mp4"))
@@ -57,8 +56,8 @@ def beatMatch(beatVideo, beatInput, inputVideo, inputAudio):
     
     #loop over the min(len(beat1), len(beat2)) and find the best match
 
-    #0-1 --> 4-6 so ==> Strech = 1/2, Shift = 4
-    #1-2 --> 6-7 so ==> Strech = 1, Shift = 5
+    #0-1 --> 4-6 so ==> Stretch = 1/2, Shift = 4
+    #1-2 --> 6-7 so ==> Stretch = 1, Shift = 5
     tempDiffVideo = 0
     tempDiffInput = 0
     beatScale = []
@@ -84,9 +83,8 @@ def beatMatch(beatVideo, beatInput, inputVideo, inputAudio):
     music1 = CompositeAudioClip([music])
     finalVideo = VideoFileClip(os.path.join("media/FinalVideo_NOAUDIO.mp4"))
     finalVideo.audio = music1
-    finalVideo.write_videofile(os.path.join("media/FinalVideo1.mp4"))
+    finalVideo.write_videofile(os.path.join("media/FinalVideo2.mp4"))
     
-
 # def flashBeat(beats, directory):
 #     #Input: numpy array of beat times and path to audio file
 #     #Output: mp4 video with flashing lights to the beat
@@ -106,7 +104,6 @@ def beatMatch(beatVideo, beatInput, inputVideo, inputAudio):
 #     #save to media/output.mp4
 #     final_clip.write_videofile(os.path.join("media/output.mp4"), fps=24, codec='libx264')
 
-
 if __name__ == "__main__":
     print("Paste music video link below: ")
     fetchVid(input()) 
@@ -118,7 +115,6 @@ if __name__ == "__main__":
     #print(beatVideo)
     #print(beatInput)
     beatMatch(beatVideo, beatInput, "media/video.mp4","media/input/audio.mp3")
-
 
     #flashBeat(beatVideo, "media/video.mp4")
 
